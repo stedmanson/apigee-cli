@@ -14,9 +14,9 @@ import (
 	"github.com/stedmanson/apigee-cli/internal/output"
 )
 
-// proxyDeployCmd represents the proxy:deploy command
-var proxyDeployCmd = &cobra.Command{
-	Use:   "deploy",
+// proxyUnDeployCmd represents the proxy:deploy command
+var proxyUnDeployCmd = &cobra.Command{
+	Use:   "undeploy",
 	Short: "deploy an indivdual or collection of proxies to an environment",
 	Long: `Provide either a proxy name and version for an individal or a headerless csv
 	in the format "name, revision" to deploy proxies to the provided environment.`,
@@ -34,7 +34,7 @@ var proxyDeployCmd = &cobra.Command{
 
 		for _, proxy := range list {
 			wg.Add(1)
-			go deployProxy(proxy.name, proxy.environment, proxy.revision, results, &wg)
+			go undeployProxy(proxy.name, proxy.environment, proxy.revision, results, &wg)
 		}
 
 		// Close the channel once all goroutines have finished
@@ -79,12 +79,12 @@ var proxyDeployCmd = &cobra.Command{
 }
 
 func init() {
-	proxyCmd.AddCommand(proxyDeployCmd)
+	proxyCmd.AddCommand(proxyUnDeployCmd)
 }
 
-func deployProxy(name string, environment string, revision string, results chan []string, wg *sync.WaitGroup) {
+func undeployProxy(name string, environment string, revision string, results chan []string, wg *sync.WaitGroup) {
 	defer wg.Done()
-	resp, err := apigee.DeployExistingProxyRevision(name, environment, revision)
+	resp, err := apigee.UndeployProxyRevision(name, environment, revision)
 	if err != nil {
 		spew.Dump(err)
 		os.Exit(1)

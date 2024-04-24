@@ -42,3 +42,21 @@ func DeployExistingProxyRevision(name string, environment string, revision strin
 
 	return response, nil
 }
+
+func UndeployProxyRevision(name string, environment string, revision string) (*DeployedProxyResponse, error) {
+	url := baseURL + "/apis/" + name + "/revisions/" + revision + "/deployments?action=undeploy&env=" + environment
+	fmt.Println(url)
+	data, err := Post(url)
+	if err != nil {
+		if errors.Is(err, ErrBadRequest) {
+			return nil, err
+		} else {
+			return nil, fmt.Errorf("error undeploying revision %s of proxy %s from environment %s: %v", revision, name, environment, err)
+		}
+	}
+
+	var response = new(DeployedProxyResponse)
+	json.Unmarshal(data, response)
+
+	return response, nil
+}
