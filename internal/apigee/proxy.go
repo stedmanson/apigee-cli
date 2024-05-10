@@ -45,7 +45,6 @@ func DeployExistingProxyRevision(name string, environment string, revision strin
 
 func UndeployProxyRevision(name string, environment string, revision string) (*DeployedProxyResponse, error) {
 	url := baseURL + "/apis/" + name + "/revisions/" + revision + "/deployments?action=undeploy&env=" + environment
-	fmt.Println(url)
 	data, err := Post(url)
 	if err != nil {
 		if errors.Is(err, ErrBadRequest) {
